@@ -65,6 +65,10 @@ export const GlobalAudioPlayer: React.FC = () => {
           if (audioRef.current) setDuration(audioRef.current.duration);
         }}
         onEnded={nextTrack}
+        onError={() => {
+          console.warn('Audio stream error, skipping to next track:', currentTrack.title);
+          nextTrack();
+        }}
       />
 
       {/* Track Info */}

@@ -7,7 +7,8 @@ import { useUIStore } from '@/stores/useUIStore';
 import {
   Home, FileText, CheckSquare, Calendar, Music, Workflow, AlertTriangle,
   FileCode, KeyRound, FileImage, Settings, ChevronDown, ChevronRight,
-  Presentation, Gamepad2, Crown, FileType, TrendingUp, History, Scissors
+  Presentation, Gamepad2, Crown, FileType, TrendingUp, History, Scissors,
+  Video, Sliders, Wallet
 } from 'lucide-react';
 
 interface NavItem {
@@ -26,7 +27,7 @@ export const Sidebar: React.FC = () => {
   const { isSidebarCollapsed } = useUIStore();
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     'Presentation': true,
-    'Visual Studio': true,
+    'Media Studio': true,
     'IT Workspace': true,
     'Games & Arcade': true,
   });
@@ -40,12 +41,20 @@ export const Sidebar: React.FC = () => {
       title: 'Main',
       items: [
         { label: 'Home', href: '/dashboard', icon: <Home className="w-4 h-4" /> },
+        { label: 'Pengelola Keuangan', href: '/finance', icon: <Wallet className="w-4 h-4 text-emerald-600" /> },
         { label: 'My Notes', href: '/notes', icon: <FileText className="w-4 h-4" /> },
         { label: 'Kanban Tasks', href: '/tasks', icon: <CheckSquare className="w-4 h-4" /> },
         { label: 'Log Kegiatan Harian', href: '/logs', icon: <History className="w-4 h-4 text-purple-600" /> },
         { label: 'Calendar', href: '/calendar', icon: <Calendar className="w-4 h-4" /> },
         { label: 'Problem Tracker', href: '/problems', icon: <AlertTriangle className="w-4 h-4 text-red-500" /> },
         { label: 'Stock Market', href: '/stocks', icon: <TrendingUp className="w-4 h-4 text-emerald-600" /> },
+      ],
+    },
+    {
+      title: 'Media Studio',
+      items: [
+        { label: 'Photo Editor (Lightroom)', href: '/photo-editor', icon: <Sliders className="w-4 h-4 text-purple-600" /> },
+        { label: 'Video Editor (CapCut)', href: '/video-editor', icon: <Video className="w-4 h-4 text-rose-600" /> },
       ],
     },
     {

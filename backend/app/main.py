@@ -7,7 +7,7 @@ from app.core.database import engine, Base
 from app.api.v1.router import api_router
 
 # Import all models to ensure metadata registration
-from app.models import user, workspace, note, task, diagram, music, problem, presentation, processed_image, daily_log  # noqa: F401
+from app.models import user, workspace, note, task, diagram, music, problem, presentation, processed_image, daily_log, finance  # noqa: F401
 
 
 from app.core.database import engine, Base, AsyncSessionLocal

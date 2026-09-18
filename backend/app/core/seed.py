@@ -4,6 +4,7 @@ from sqlalchemy.future import select
 from app.models.user import User
 from app.models.workspace import Workspace
 from app.models.music import AudioTrack
+from app.models.finance import Transaction, Budget, SavingsGoal
 from app.core.security import get_password_hash
 
 logger = logging.getLogger(__name__)
@@ -41,71 +42,61 @@ async def seed_initial_data(db: AsyncSession):
         await db.commit()
         await db.refresh(default_ws)
 
-    # 3. Seed Popular Mandarin Songs into audio_tracks
-    mandarin_songs = [
+    # 3. Seed Open Source & Popular Trending Songs into audio_tracks
+    open_source_trending_songs = [
         {
-            "title": "晴天 (Sunny Day)",
-            "artist": "周杰伦 (Jay Chou)",
-            "album": "叶惠美 (Ye Hui Mei)",
-            "duration_seconds": 269,
-            "audio_url": "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=ambient-piano-amp-strings-10711.mp3",
-            "cover_art_url": "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=400&q=80",
+            "title": "Die With A Smile",
+            "artist": "Lady Gaga & Bruno Mars",
+            "album": "Die With A Smile - Single",
+            "duration_seconds": 251,
+            "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/bf/d4/0e/bfd40ea4-8e12-3252-8789-f53855ff431b/mzaf_10022467140885232976.plus.aac.p.m4a",
+            "cover_art_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/c3/84/c4/c384c478-f716-e52a-9e79-5e9334c4b220/24UMGIM89626.rgb.jpg/600x600bb.jpg",
+            "source_type": "trending_hits",
         },
         {
-            "title": "以后别做朋友 (Let's Not Be Friends Anymore)",
-            "artist": "周兴哲 (Eric Chou)",
-            "album": "学着爱 (My Way to Love)",
-            "duration_seconds": 258,
-            "audio_url": "https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73187.mp3?filename=lofi-study-112191.mp3",
-            "cover_art_url": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=400&q=80",
+            "title": "Birds of a Feather",
+            "artist": "Billie Eilish",
+            "album": "HIT ME HARD AND SOFT",
+            "duration_seconds": 198,
+            "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/6c/4a/07/6c4a0705-ebcf-5a75-b9f4-27921a221f76/mzaf_6138676239169651586.plus.aac.p.m4a",
+            "cover_art_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/71/39/33/71393390-33fa-0d70-a35c-f4b6a9e1e8bc/24UMGIM36506.rgb.jpg/600x600bb.jpg",
+            "source_type": "trending_hits",
         },
         {
-            "title": "光年之外 (Light Years Away)",
-            "artist": "邓紫棋 (G.E.M.)",
-            "album": " Passengers OST",
-            "duration_seconds": 235,
-            "audio_url": "https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=synthwave-80s-110045.mp3",
-            "cover_art_url": "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=400&q=80",
+            "title": "Espresso",
+            "artist": "Sabrina Carpenter",
+            "album": "Short n' Sweet",
+            "duration_seconds": 175,
+            "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/05/22/02/052202bb-81c1-4b10-660c-267926e2e519/mzaf_8407425126830590807.plus.aac.p.m4a",
+            "cover_art_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/c4/86/e1/c486e115-ff34-5858-a400-f9ff20311f6c/24UMGIM50882.rgb.jpg/600x600bb.jpg",
+            "source_type": "trending_hits",
         },
         {
-            "title": "告白气球 (Love Confession)",
-            "artist": "周杰伦 (Jay Chou)",
-            "album": "周杰伦的床边故事",
-            "duration_seconds": 215,
-            "audio_url": "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=ambient-piano-amp-strings-10711.mp3",
+            "title": "Cruel Summer",
+            "artist": "Taylor Swift",
+            "album": "Lover",
+            "duration_seconds": 178,
+            "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview126/v4/09/b3/ee/09b3ee38-d621-c4d9-83c9-95a28bf2cfa1/mzaf_16155609427772836267.plus.aac.p.m4a",
+            "cover_art_url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/e5/2a/b2/e52ab27e-e17f-02ef-e836-e8d1c9ef0079/19UMGIM53909.rgb.jpg/600x600bb.jpg",
+            "source_type": "trending_hits",
+        },
+        {
+            "title": "Synthesis & Lofi Coding",
+            "artist": "Audius Open Protocol",
+            "album": "Electronic & Chill",
+            "duration_seconds": 240,
+            "audio_url": "https://api.audius.co/v1/tracks/y6wExE/stream?app_name=NEXUS_MUSIC",
             "cover_art_url": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=400&q=80",
+            "source_type": "audius_opensource",
         },
         {
-            "title": "修炼爱情 (Practice Love)",
-            "artist": "林俊杰 (JJ Lin)",
-            "album": "因你而在 (Stories Untold)",
-            "duration_seconds": 280,
-            "audio_url": "https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73187.mp3?filename=lofi-study-112191.mp3",
-            "cover_art_url": "https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=400&q=80",
-        },
-        {
-            "title": "小幸運 (A Little Happiness)",
-            "artist": "田馥甄 (Hebe Tien)",
-            "album": "我的少女時代 OST",
-            "duration_seconds": 265,
-            "audio_url": "https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=synthwave-80s-110045.mp3",
-            "cover_art_url": "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=400&q=80",
-        },
-        {
-            "title": "爱很简单 (I Love You)",
-            "artist": "陶喆 (David Tao)",
-            "album": "陶喆同名专辑",
-            "duration_seconds": 270,
-            "audio_url": "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=ambient-piano-amp-strings-10711.mp3",
-            "cover_art_url": "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?auto=format&fit=crop&w=400&q=80",
-        },
-        {
-            "title": "月亮代表我的心 (The Moon Represents My Heart)",
-            "artist": "邓丽君 (Teresa Teng)",
-            "album": "经典金曲传奇",
+            "title": "Cyberpunk Neon Drive",
+            "artist": "Open Music Creators",
+            "album": "Retro Synthwave",
             "duration_seconds": 210,
-            "audio_url": "https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73187.mp3?filename=lofi-study-112191.mp3",
+            "audio_url": "https://api.audius.co/v1/tracks/D7a3e/stream?app_name=NEXUS_MUSIC",
             "cover_art_url": "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=400&q=80",
+            "source_type": "audius_opensource",
         },
     ]
 
@@ -113,8 +104,8 @@ async def seed_initial_data(db: AsyncSession):
     existing_tracks = tracks_res.scalars().all()
 
     if not existing_tracks:
-        logger.info("Seeding popular Mandarin tracks into database...")
-        for s in mandarin_songs:
+        logger.info("Seeding open source and trending tracks into database...")
+        for s in open_source_trending_songs:
             track = AudioTrack(
                 workspace_id=default_ws.id,
                 owner_id=jelvis_user.id,
@@ -124,8 +115,68 @@ async def seed_initial_data(db: AsyncSession):
                 duration_seconds=s["duration_seconds"],
                 audio_url=s["audio_url"],
                 cover_art_url=s["cover_art_url"],
-                source_type="popular_mandarin",
+                source_type=s["source_type"],
                 is_favorite=True,
             )
             db.add(track)
         await db.commit()
+
+    # 4. Seed Initial Financial Transactions & Budgets
+    tx_res = await db.execute(select(Transaction).where(Transaction.workspace_id == default_ws.id))
+    existing_txs = tx_res.scalars().all()
+
+    if not existing_txs:
+        logger.info("Seeding initial financial transactions into database...")
+        demo_txs = [
+            {"type": "income", "amount": 15000000.0, "category": "Gaji Utama", "description": "Gaji Bulanan PT BCAS", "account": "BCA"},
+            {"type": "income", "amount": 3500000.0, "category": "Freelance & Consulting", "description": "Proyek Development Tools", "account": "Mandiri"},
+            {"type": "expense", "amount": 2500000.0, "category": "Tagihan & Utilitas", "description": "Listrik PLN, WiFi Indihome, Sewa Server", "account": "BCA"},
+            {"type": "expense", "amount": 3200000.0, "category": "Makanan & Minuman", "description": "Belanja Bulanan & Makan Harian", "account": "Mandiri"},
+            {"type": "expense", "amount": 1200000.0, "category": "Transportasi", "description": "Bensin, Tol, & Servis Rutin", "account": "Cash"},
+            {"type": "expense", "amount": 1800000.0, "category": "Belanja & Lifestyle", "description": "Beli Perlengkapan Meja Kerja", "account": "E-Wallet"},
+            {"type": "expense", "amount": 750000.0, "category": "Hiburan & Langganan", "description": "Langganan Cloud, Spotify, & Cinema", "account": "Kartu Kredit"},
+        ]
+        for t in demo_txs:
+            tx = Transaction(
+                workspace_id=default_ws.id,
+                owner_id=jelvis_user.id,
+                type=t["type"],
+                amount=t["amount"],
+                category=t["category"],
+                description=t["description"],
+                account=t["account"],
+            )
+            db.add(tx)
+        
+        # Seed Budget limits
+        demo_budgets = [
+            {"category": "Makanan & Minuman", "monthly_limit": 4000000.0},
+            {"category": "Transportasi", "monthly_limit": 2000000.0},
+            {"category": "Belanja & Lifestyle", "monthly_limit": 2500000.0},
+            {"category": "Hiburan & Langganan", "monthly_limit": 1000000.0},
+        ]
+        for b in demo_budgets:
+            bg = Budget(
+                workspace_id=default_ws.id,
+                category=b["category"],
+                monthly_limit=b["monthly_limit"],
+            )
+            db.add(bg)
+
+        # Seed Savings Goals
+        demo_goals = [
+            {"target_name": "Dana Darurat 6 Bulan", "target_amount": 50000000.0, "current_amount": 32000000.0, "target_date": "2026-12-31"},
+            {"target_name": "Beli Laptop Mac Studio", "target_amount": 35000000.0, "current_amount": 21000000.0, "target_date": "2026-11-15"},
+        ]
+        for g in demo_goals:
+            sg = SavingsGoal(
+                workspace_id=default_ws.id,
+                target_name=g["target_name"],
+                target_amount=g["target_amount"],
+                current_amount=g["current_amount"],
+                target_date=g["target_date"],
+            )
+            db.add(sg)
+
+        await db.commit()
+
