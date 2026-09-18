@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # NEXUS WORKSPACE
 
 > **Tagline:** One Workspace. Infinite Possibilities.  
@@ -73,3 +74,6 @@ npm run dev
 docker-compose up --build
 ```
 "# toolJelvis" 
+=======
+# toolJelvis
+>>>>>>> 39ade27a832e760ba1aaa28ad0cc964f71a20a3e
